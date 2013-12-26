@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"net/http"
 	"github.com/whaly/rpicam"
+	"net/http"
 )
 
 func WebcamHandler(w http.ResponseWriter, r *http.Request, pm *rpicam.Manager) {
