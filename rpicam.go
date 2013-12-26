@@ -63,8 +63,12 @@ func (pm *Manager) Serve() {
 			response := Response{}
 
 			if request.args != "latest" {
-				args := strings.Split(raspistillDefaultArguments+" "+request.args, " ")
-				out, err := exec.Command(raspistillCommand, args...).CombinedOutput()
+				args := raspistillDefaultArguments
+				if len(request.args) > 0 {
+					args = args + " " + request.args
+				}
+				argsArray := strings.Split(args, " ")
+				out, err := exec.Command(raspistillCommand, argsArray...).CombinedOutput()
 				response.Err = err
 				response.Data = out
 				pm.latest = out
