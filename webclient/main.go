@@ -19,9 +19,11 @@ func WebcamHandler(w http.ResponseWriter, r *http.Request, pm *rpicam.Manager) {
 	result := pm.NewShot(args)
 
 	if result.Err != nil {
+		fmt.Printf("ERROR : %s\n", result.Err.Error())
 		http.Error(w, result.Err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	w.Header().Set("Content-Type", "image")
 	w.Write(result.Data)
 }

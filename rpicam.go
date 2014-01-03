@@ -1,13 +1,9 @@
 package rpicam
 
 import (
+	"errors"
 	"os/exec"
 	"strings"
-)
-
-const (
-	raspistillCommand          = "raspistill"
-	raspistillDefaultArguments = "-hf -vf -o - -t 500 --nopreview"
 )
 
 type Manager struct {
@@ -69,9 +65,17 @@ func (pm *Manager) Serve() {
 				}
 				argsArray := strings.Split(args, " ")
 				out, err := exec.Command(raspistillCommand, argsArray...).CombinedOutput()
-				response.Err = err
-				response.Data = out
-				pm.latest = out
+				if err == nil {
+					// we check the magic number FF D8
+					if len(out) > 2 && out[0] == 255 && out[1] == 216 {
+						response.Data = out
+						pm.latest = out
+					} else {
+						response.Err = errors.New(string(out))
+					}
+				} else {
+					response.Err = err
+				}
 			} else {
 				response.Data = pm.latest
 			}
